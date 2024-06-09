@@ -109,11 +109,13 @@ function drawCharacter(x, y, direction) {
     ctx.save();
     ctx.translate(x + 25, y + 25);
     if (direction === 'left') {
-        ctx.rotate(Math.PI);
+        ctx.scale(-1, 1); // Espelha horizontalmente
     }
     ctx.drawImage(characterImage, -25, -25, 50, 50);
     ctx.restore();
 }
+
+
 
 function drawEnemy(x, y) {
     ctx.drawImage(enemyImage, x, y, 50, 50);
@@ -480,14 +482,6 @@ function handleFireBreath() {
         }
     }
 }
-
-
-
-
-
-
-
-
 
 document.addEventListener('keydown', (event) => {
     if (event.key === 'w') keys.w = true;
