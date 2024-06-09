@@ -15,11 +15,13 @@
         <div id="stats" style="display: none;">
             <h2>Estatísticas</h2>
             <p id="finalScore"></p>
+            <p id="enemiesKilled"></p> <!-- Exibir número de inimigos mortos -->
             <button id="restartButton" onclick="restartGame()">Recomeçar</button>
         </div>
         <div id="startMenu">
-            <h1>Jogo Web</h1>
+            <h1>MEDIEVAL GAME</h1>
             <button onclick="showControls()">Controles</button>
+            <button onclick="startGame()">Iniciar Jogo</button> <!-- Novo botão para iniciar diretamente -->
         </div>
         <div id="controlsMenu" style="display: none;">
             <h2>Controles do Jogo</h2>
@@ -28,7 +30,8 @@
                 <li>Atirar: Barra de Espaço</li>
                 <li>Fogo: F</li>
                 <li>Pausar: P</li>
-                <li>Corrida: Shift</li>
+                <li>Correr: Shift</li>
+                <li>O Fire Breath é desbloqueado a partir do Nível 3 e possui um cooldown de 5 segundos.</li>
             </ul>
             <button onclick="startGame()">Iniciar Jogo</button>
         </div>
@@ -37,3 +40,4 @@
     <script src="game.js"></script>
 </body>
 </html>
+    

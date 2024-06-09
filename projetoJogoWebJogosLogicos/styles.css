@@ -76,10 +76,10 @@ body {
     cursor: pointer;
 }
 
-#pauseButton:hover {
-    background-color: #d4af37;
-    color: #1e1e1e;
-}
+    #pauseButton:hover {
+        background-color: #d4af37;
+        color: #1e1e1e;
+    }
 
 .glow {
     animation: glow 1s ease-in-out infinite alternate;
@@ -89,6 +89,7 @@ body {
     from {
         box-shadow: 0 0 10px #fff;
     }
+
     to {
         box-shadow: 0 0 20px #ff0, 0 0 30px #ff0, 0 0 40px #ff0, 0 0 50px #ff0;
     }
