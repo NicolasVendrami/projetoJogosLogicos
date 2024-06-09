@@ -299,18 +299,26 @@ function handleFireBreath() {
     if (fireBreathActive) {
         const breathX = characterDirection === 'right' ? characterX + 25 : characterX - 50;
         const breathY = characterY + 25;
-        drawFireBreath(characterX, characterY, characterDirection);
 
         // Verifica se o Fire Breath colide com os inimigos
         enemies.forEach((enemy, eIndex) => {
-            if (enemy.x < breathX + 50 && enemy.x + 50 > breathX &&
-                enemy.y < breathY + 50 && enemy.y + 50 > breathY) {
+            if (characterDirection === 'right' && enemy.x > breathX && enemy.x < breathX + 75 && enemy.y > breathY - 15 && enemy.y < breathY + 15 ||
+                characterDirection === 'left' && enemy.x < breathX + 50 && enemy.x > breathX - 50 && enemy.y > breathY - 15 && enemy.y < breathY + 15) {
                 enemies.splice(eIndex, 1);
                 updateScore(2); // Fire Breath dá 2 pontos por inimigo atingido
                 hitSound.play();
                 enemiesKilled += 1;
             }
         });
+
+        drawFireBreath(characterX, characterY, characterDirection); // Desenha o fire breath
+
+        // Verifica se o Fire Breath colide com o mago
+        if (characterDirection === 'right' && characterX < breathX + 75 && characterX + 50 > breathX && characterY < breathY + 15 && characterY + 50 > breathY ||
+            characterDirection === 'left' && characterX < breathX && characterX + 50 > breathX - 50 && characterY < breathY + 15 && characterY + 50 > breathY) {
+            // Se o mago estiver na área do fire breath, não causa dano
+            return;
+        }
 
         fireBreathTimer += 1;
         if (fireBreathTimer >= 60) {
@@ -319,7 +327,6 @@ function handleFireBreath() {
         }
     }
 }
-
 
 
 
