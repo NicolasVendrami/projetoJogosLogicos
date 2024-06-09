@@ -1,0 +1,95 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #2e2e2e;
+    color: white;
+    font-family: 'Times New Roman', serif;
+}
+
+#gameContainer {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    border: 2px solid #d4af37;
+    background-color: #1e1e1e;
+    box-shadow: 0 0 10px #d4af37;
+}
+
+#gameCanvas {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+}
+
+#score, #lives, #level {
+    position: absolute;
+    font-size: 24px;
+    color: #d4af37;
+}
+
+#score {
+    top: 10px;
+    left: 10px;
+}
+
+#lives {
+    top: 10px;
+    right: 10px;
+}
+
+#level {
+    bottom: 10px;
+    left: 10px;
+}
+
+#stats {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #d4af37;
+}
+
+#startMenu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: none;
+    color: #d4af37;
+}
+
+#pauseButton {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 18px;
+    color: #d4af37;
+    background: none;
+    border: 2px solid #d4af37;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#pauseButton:hover {
+    background-color: #d4af37;
+    color: #1e1e1e;
+}
+
+.glow {
+    animation: glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 10px #fff;
+    }
+    to {
+        box-shadow: 0 0 20px #ff0, 0 0 30px #ff0, 0 0 40px #ff0, 0 0 50px #ff0;
+    }
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo Web</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="score">Pontuação: 0 | Recorde: 0</div>
+        <div id="lives">❤️❤️❤️</div>
+        <div id="level">Nível: 1</div>
+        <div id="stats" style="display: none;">
+            <h2>Estatísticas</h2>
+            <p id="finalScore"></p>
+            <button id="restartButton" onclick="restartGame()">Recomeçar</button>
+        </div>
+        <div id="startMenu">
+            <h1>Jogo Web</h1>
+            <button onclick="showControls()">Controles</button>
+        </div>
+        <div id="controlsMenu" style="display: none;">
+            <h2>Controles do Jogo</h2>
+            <ul>
+                <li>Movimento: W (Cima), A (Esquerda), S (Baixo), D (Direita)</li>
+                <li>Atirar: Barra de Espaço</li>
+                <li>Fogo: F</li>
+                <li>Pausar: P</li>
+                <li>Corrida: Shift</li>
+            </ul>
+            <button onclick="startGame()">Iniciar Jogo</button>
+        </div>
+        <button id="pauseButton" onclick="togglePause()">Pausar</button>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
