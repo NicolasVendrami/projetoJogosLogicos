@@ -119,6 +119,39 @@ function loadImages() {
     });
 }
 
+function winGame() {
+    gameRunning = false;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Configurações de estilo para a tela de vitória
+    ctx.font = '40px Arial';
+    ctx.fillStyle = 'green';
+    ctx.textAlign = 'center';
+
+    // Exibir "Você Venceu!"
+    ctx.fillText('Você Venceu!', canvas.width / 2, canvas.height / 2 - 80);
+
+    // Configurações de estilo para as estatísticas
+    ctx.font = '30px Arial';
+    ctx.fillStyle = 'white';
+
+    // Exibir estatísticas
+    ctx.fillText('Pontuação Final: ' + score, canvas.width / 2, canvas.height / 2 - 20);
+    ctx.fillText('Inimigos Mortos: ' + enemiesKilled, canvas.width / 2, canvas.height / 2 + 20);
+    ctx.fillText('Perguntas Certas: ' + correctAnswers, canvas.width / 2, canvas.height / 2 + 60);
+    ctx.fillText('Perguntas Erradas: ' + incorrectAnswers, canvas.width / 2, canvas.height / 2 + 100);
+}
+
+function checkWinCondition() {
+    // Exemplo de condição de vitória: pontuação >= 100
+    if (score >= 100) {
+        winGame();
+    }
+    // Você pode adicionar outras condições, como número de inimigos mortos, nível, etc.
+}
+
+
+
 function drawBackground() {
     if (backgroundImage) {
         ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
@@ -501,6 +534,8 @@ function gameLoop() {
     if (isQuestionVisible) {
         return; // Não avança o loop enquanto a pergunta estiver visível
     }
+
+    checkWinCondition();
 
     requestAnimationFrame(gameLoop);
 }
