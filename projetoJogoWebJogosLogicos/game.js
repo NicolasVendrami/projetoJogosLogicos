@@ -25,6 +25,13 @@ let fireBreathActive = false;
 let fireBreathTimer = 0;
 let lastFireBreathTime = 0; // Para o cooldown do fire breath
 let enemiesKilled = 0; // Contador de inimigos mortos
+let isQuestionVisible = false;
+let questionsCorrect = 0; // Contador de perguntas acertadas
+let showControlsMenu = false; // Controla a exibição dos controles
+let correctAnswers = 0;
+let incorrectAnswers = 0;
+
+
 
 const characterImage = new Image();
 characterImage.src = 'images/character.png';
@@ -44,6 +51,9 @@ castleBackground.src = 'images/castle_background.jpg';
 const anotherBackground = new Image();
 anotherBackground.src = 'images/another_background.jpg'; // Outra imagem de fundo
 
+const thirdBackground = new Image();
+thirdBackground.src = 'images/thirdBackground.jpeg';
+
 let backgroundImage = castleBackground;
 let characterDirection = 'right';
 
@@ -59,6 +69,22 @@ const keys = {
     shift: false,
     space: false,
     f: false
+};
+
+const questions = [
+    { question: "Qual é a capital do Brasil?", answer: "brasilia" },
+    { question: "Quantos lados tem um triângulo?", answer: "3" },
+    { question: "Qual é a cor do céu?", answer: "azul" },
+    { question: "Quanto é 2 + 2?", answer: "4" }
+];
+
+const controlsStyle = {
+    position: 'absolute',
+    top: '10px',
+    left: '10px',
+    color: 'white',
+    fontFamily: 'MedievalFont', // Substitua por uma fonte medieval
+    fontSize: '16px',
 };
 
 function loadImages() {
@@ -103,6 +129,10 @@ function drawBackground() {
 
 function changeBackground() {
     backgroundImage = anotherBackground;
+}
+
+function changeBackgroundAgain() {
+    backgroundImage = thirdBackground;
 }
 
 function drawCharacter(x, y, direction) {
@@ -154,8 +184,12 @@ function drawFireBreath(x, y, direction) {
 }
 
 
-
-
+function updateStats() {
+    document.getElementById('score').innerText = `Pontuação: ${score} | Recorde: ${highScore} | Perguntas Acertadas: ${questionsCorrect}`;
+    document.getElementById('lives').innerText = `Vidas: ${lives}`;
+    document.getElementById('level').innerText = `Nível: ${currentLevel}`;
+    document.getElementById('enemiesKilled').innerText = `Inimigos Mortos: ${enemiesKilled}`;
+}
 
 function updateScore(points) {
     score += points;
@@ -164,6 +198,12 @@ function updateScore(points) {
         localStorage.setItem('highScore', highScore);
     }
     document.getElementById('score').innerText = `Pontuação: ${score} | Recorde: ${highScore}`;
+
+    // Exibir pergunta a cada 20 pontos
+    if (score % 20 === 0) {
+        isQuestionVisible = true;
+        showQuestion();
+    }
 
     // Atualiza o nível com base na pontuação
     let newLevel = currentLevel;
@@ -185,8 +225,10 @@ function updateScore(points) {
 
     if (currentLevel >= 3) {
         canUseFireBreath = true;
+        changeBackgroundAgain();
     }
 }
+
 
 function updateLives() {
     const hearts = '❤️'.repeat(lives);
@@ -195,10 +237,27 @@ function updateLives() {
 
 function endGame() {
     gameRunning = false;
-    document.getElementById('stats').style.display = 'block';
-    document.getElementById('finalScore').innerText = `Pontuação final: ${score}`;
-    document.getElementById('enemiesKilled').innerText = `Inimigos mortos: ${enemiesKilled}`;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Configurações de estilo para a tela de game over
+    ctx.font = '40px Arial';
+    ctx.fillStyle = 'red';
+    ctx.textAlign = 'center';
+    
+    // Exibir "Game Over"
+    ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2 - 80);
+    
+    // Configurações de estilo para as estatísticas
+    ctx.font = '30px Arial';
+    ctx.fillStyle = 'white';
+    
+    // Exibir estatísticas
+    ctx.fillText('Pontuação Final: ' + score, canvas.width / 2, canvas.height / 2 - 20);
+    ctx.fillText('Inimigos Mortos: ' + enemiesKilled, canvas.width / 2, canvas.height / 2 + 20);
+    ctx.fillText('Perguntas Certas: ' + correctAnswers, canvas.width / 2, canvas.height / 2 + 60);
+    ctx.fillText('Perguntas Erradas: ' + incorrectAnswers, canvas.width / 2, canvas.height / 2 + 100);
 }
+
 
 function restartGame() {
     score = 0;
@@ -213,16 +272,44 @@ function restartGame() {
     fireBreathTimer = 0;
     lastFireBreathTime = 0;
     enemiesKilled = 0;
+    questionsCorrect = 0; // Reinicia o contador de perguntas acertadas
+    showControlsMenu = false; // Esconde os controles
+
+    updateStats();
 
     document.getElementById('stats').style.display = 'none';
-    document.getElementById('score').innerText = `Pontuação: ${score} | Recorde: ${highScore}`;
-    document.getElementById('lives').innerText = '❤️❤️❤️';
-    document.getElementById('level').innerText = `Nível: ${currentLevel}`;
     gameRunning = true;
     isPaused = false;
 
     spawnEnemies();
     gameLoop();
+
+    document.getElementById('restartButton').addEventListener('click', () => {
+        document.getElementById('stats').style.display = 'none';
+        document.getElementById('score').innerText = 'Pontuação: 0 | Recorde: ' + localStorage.getItem('highScore');
+        document.getElementById('lives').innerText = '❤️❤️❤️';
+        document.getElementById('level').innerText = 'Nível: 1';
+        correctAnswers = 0;
+        incorrectAnswers = 0;
+        gameRunning = true;
+        isPaused = false;
+        score = 0;
+        lives = 3;
+        enemies = [];
+        strongEnemies = [];
+        projectiles = [];
+        currentLevel = 1;
+        characterX = 100;
+        characterY = 100;
+        canUseFireBreath = false;
+        fireBreathActive = false;
+        fireBreathTimer = 0;
+        lastFireBreathTime = 0;
+        enemiesKilled = 0;
+        spawnEnemies();
+        gameLoop();
+    });
+
 }
 
 function moveCharacter() {
@@ -277,11 +364,16 @@ function handleCollisions() {
         enemies.forEach((enemy, eIndex) => {
             if (projectile.x < enemy.x + 50 && projectile.x + 10 > enemy.x &&
                 projectile.y < enemy.y + 50 && projectile.y + 5 > enemy.y) {
-                enemies.splice(eIndex, 1);
-                projectiles.splice(pIndex, 1);
-                updateScore(enemy.health > 1 ? 2 : 1);
-                hitSound.play();
-                enemiesKilled += 1;
+                if (enemy.health > 1) {
+                    enemy.health -= 1; // Inimigo `strong` perde 1 de vida
+                    projectiles.splice(pIndex, 1);
+                } else {
+                    enemies.splice(eIndex, 1);
+                    projectiles.splice(pIndex, 1);
+                    updateScore(2); // 2 pontos por inimigo `strong` morto
+                    hitSound.play();
+                    enemiesKilled += 1;
+                }
             }
         });
     });
@@ -297,6 +389,46 @@ function handleCollisions() {
     });
 }
 
+function handleQuestionAnswer(isCorrect) {
+    if (isCorrect) {
+        correctAnswers++;
+        lives++;
+    } else {
+        incorrectAnswers++;
+        lives--;
+    }
+    // Atualizar a vida na tela
+    document.getElementById('lives').innerText = '❤️'.repeat(lives);
+    // Continuar o jogo após responder
+    gameRunning = true;
+    isPaused = false;
+    gameLoop();
+}
+
+
+function handleMouseDown(event) {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    if (!gameRunning) {
+        if (showControlsMenu) {
+            handleControlsClick(mouseX, mouseY);
+        }
+    }
+}
+
+function handleControlsClick(x, y) {
+    if (showControlsMenu) {
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        if (x >= centerX - 30 && x <= centerX + 30 && y >= centerY + 160 && y <= centerY + 200) {
+            showControlsMenu = false;
+        }
+    }
+}
+
 function handleFireBreath() {
     if (fireBreathActive) {
         const breathX = characterDirection === 'right' ? characterX + 25 : characterX - 50;
@@ -304,8 +436,8 @@ function handleFireBreath() {
 
         // Verifica se o Fire Breath colide com os inimigos
         enemies.forEach((enemy, eIndex) => {
-            if (characterDirection === 'right' && enemy.x > breathX && enemy.x < breathX + 75 && enemy.y > breathY - 15 && enemy.y < breathY + 15 ||
-                characterDirection === 'left' && enemy.x < breathX + 50 && enemy.x > breathX - 50 && enemy.y > breathY - 15 && enemy.y < breathY + 15) {
+            if (characterDirection === 'right' && enemy.x > breathX && enemy.x < breathX + 75 && enemy.y > breathY - 40 && enemy.y < breathY + 40 ||
+                characterDirection === 'left' && enemy.x < breathX + 50 && enemy.x > breathX - 50 && enemy.y > breathY - 40 && enemy.y < breathY + 40) {
                 enemies.splice(eIndex, 1);
                 updateScore(2); // Fire Breath dá 2 pontos por inimigo atingido
                 hitSound.play();
@@ -314,13 +446,6 @@ function handleFireBreath() {
         });
 
         drawFireBreath(characterX, characterY, characterDirection); // Desenha o fire breath
-
-        // Verifica se o Fire Breath colide com o mago
-        if (characterDirection === 'right' && characterX < breathX + 75 && characterX + 50 > breathX && characterY < breathY + 15 && characterY + 50 > breathY ||
-            characterDirection === 'left' && characterX < breathX && characterX + 50 > breathX - 50 && characterY < breathY + 15 && characterY + 50 > breathY) {
-            // Se o mago estiver na área do fire breath, não causa dano
-            return;
-        }
 
         fireBreathTimer += 1;
         if (fireBreathTimer >= 60) {
@@ -370,8 +495,75 @@ function gameLoop() {
         }
     });
 
+    drawControls();
+
+    // Exibir pergunta se necessário
+    if (isQuestionVisible) {
+        return; // Não avança o loop enquanto a pergunta estiver visível
+    }
+
     requestAnimationFrame(gameLoop);
 }
+
+
+function showQuestion() {
+    const questionIndex = Math.floor(Math.random() * questions.length);
+    const question = questions[questionIndex].question;
+    const answer = questions[questionIndex].answer.toLowerCase();
+
+    const userAnswer = prompt(question);
+    if (userAnswer && userAnswer.toLowerCase() === answer) {
+        lives++;
+        updateLives();
+    } else {
+        lives--;
+        updateLives();
+    }
+
+    isQuestionVisible = false;
+}
+
+
+function askQuestion() {
+    const questionIndex = Math.floor(Math.random() * questions.length);
+    const { question, answer } = questions[questionIndex];
+    const playerAnswer = prompt(question);
+
+    if (playerAnswer && playerAnswer.toLowerCase() === answer) {
+        lives += 1;
+        updateLives();
+        alert("Resposta correta! Você ganhou uma vida.");
+        correctAnswers++;
+    } else {
+        lives -= 1;
+        updateLives();
+        alert("Resposta incorreta! Você perdeu uma vida.");
+        incorrectAnswers++;
+    }
+}
+
+function drawControls() {
+    if (showControlsMenu) {
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = 'white';
+        ctx.font = '20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Controles', canvas.width / 2, canvas.height / 2 - 40);
+        ctx.font = '16px Arial';
+        ctx.fillText('W - Cima', canvas.width / 2, canvas.height / 2);
+        ctx.fillText('A - Esquerda', canvas.width / 2, canvas.height / 2 + 20);
+        ctx.fillText('S - Baixo', canvas.width / 2, canvas.height / 2 + 40);
+        ctx.fillText('D - Direita', canvas.width / 2, canvas.height / 2 + 60);
+        ctx.fillText('Shift - Correr', canvas.width / 2, canvas.height / 2 + 80);
+        ctx.fillText('Espaço - Atirar', canvas.width / 2, canvas.height / 2 + 100);
+        ctx.fillText('F - Fire Breath', canvas.width / 2, canvas.height / 2 + 120);
+        ctx.fillText('P - Pausar', canvas.width / 2, canvas.height / 2 + 140);
+        ctx.fillText('Voltar', canvas.width / 2, canvas.height / 2 + 180);
+    }
+}
+
 
 function startGame() {
     document.getElementById('startMenu').style.display = 'none';
@@ -380,15 +572,16 @@ function startGame() {
     restartGame();
 }
 
+
 function showControls() {
-    document.getElementById('startMenu').style.display = 'none';
-    document.getElementById('controlsMenu').style.display = 'block';
+    showControlsMenu = true;
+}
+function hideControls() {
+    isPaused = false;
+    gameRunning = true;
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa a tela para continuar o jogo
 }
 
-function hideControls() {
-    document.getElementById('controlsMenu').style.display = 'none';
-    document.getElementById('startMenu').style.display = 'block';
-}
 
 function togglePause() {
     isPaused = !isPaused;
@@ -502,6 +695,21 @@ document.addEventListener('keyup', (event) => {
     if (event.key === 'Shift') keys.shift = false;
 });
 
+canvas.addEventListener('click', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    if (mouseX > canvas.width - 210 && mouseX < canvas.width - 10 && mouseY > canvas.height - 70 && mouseY < canvas.height - 10) {
+        hideControls();
+    }
+});
+
+document.addEventListener('mousedown', handleMouseDown);
+
 loadImages().then(() => {
     document.getElementById('startMenu').style.display = 'block';
+    document.getElementById('controlsMenu').style.display = 'none'; // Esconder o menu de controles inicialmente
+    document.getElementById('startButton').addEventListener('click', showControls); // Adicionar evento de clique para mostrar os controles
+    gameLoop(); // Iniciar o loop do jogo
 });

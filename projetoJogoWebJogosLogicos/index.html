@@ -8,6 +8,7 @@
 </head>
 <body>
     <div id="gameContainer">
+
         <canvas id="gameCanvas"></canvas>
         <div id="score">Pontuação: 0 | Recorde: 0</div>
         <div id="lives">❤️❤️❤️</div>
@@ -16,28 +17,40 @@
             <h2>Estatísticas</h2>
             <p id="finalScore"></p>
             <p id="enemiesKilled"></p> <!-- Exibir número de inimigos mortos -->
-            <button id="restartButton" onclick="restartGame()">Recomeçar</button>
+            <button id="restartButton" onclick="restartGame()" class="button">Recomeçar</button>
         </div>
         <div id="startMenu">
             <h1>MEDIEVAL GAME</h1>
-            <button onclick="showControls()">Controles</button>
-            <button onclick="startGame()">Iniciar Jogo</button> <!-- Novo botão para iniciar diretamente -->
+            <button onclick="showControls()" class="button">Controles</button>
+            <button onclick="startGame()" class="button">Iniciar Jogo</button> <!-- Novo botão para iniciar diretamente -->
         </div>
-        <div id="controlsMenu" style="display: none;">
-            <h2>Controles do Jogo</h2>
-            <ul>
-                <li>Movimento: W (Cima), A (Esquerda), S (Baixo), D (Direita)</li>
-                <li>Atirar: Barra de Espaço</li>
-                <li>Fogo: F</li>
-                <li>Pausar: P</li>
-                <li>Correr: Shift</li>
-                <li>O Fire Breath é desbloqueado a partir do Nível 3 e possui um cooldown de 5 segundos.</li>
-            </ul>
-            <button onclick="startGame()">Iniciar Jogo</button>
-        </div>
-        <button id="pauseButton" onclick="togglePause()">Pausar</button>
+    </div>
+    <div id="controlsMenu" style="display: none;">
+        <h2>Controles do Jogo</h2>
+        <ul>
+            <li>Movimento: W (Cima), A (Esquerda), S (Baixo), D (Direita)</li>
+            <li>Atirar: Barra de Espaço</li>
+            <li>Fogo: F</li>
+            <li>Pausar: P</li>
+            <li>O Fire Breath é desbloqueado a partir do Nível 3 e possui um cooldown de 5 segundos.</li>
+        </ul>
+        <button onclick="startGame()">Iniciar Jogo</button>
+    </div>
+    <button id="pauseButton" onclick="togglePause()">Pausar</button>
+
+    <div id="questionContainer" style="display: none;">
+        <h2>Pergunta:</h2>
+        <p id="question"></p>
+        <input type="text" id="answer" placeholder="Sua resposta">
+        <button onclick="checkAnswer()">Responder</button>
+        <button onclick="askQuestion()">Responder Pergunta</button>
     </div>
     <script src="game.js"></script>
+
+    <script>
+        function showControls() {
+            document.getElementById('controlsMenu').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
-    
