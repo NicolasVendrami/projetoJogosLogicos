@@ -30,6 +30,8 @@ let questionsCorrect = 0; // Contador de perguntas acertadas
 let showControlsMenu = false; // Controla a exibição dos controles
 let correctAnswers = 0;
 let incorrectAnswers = 0;
+let totalEnemiesSpawned = 0;
+
 
 
 
@@ -278,7 +280,7 @@ function endGame() {
     ctx.textAlign = 'center';
     
     // Exibir "Game Over"
-    ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2 - 80);
+    ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2 - 140);
     
     // Configurações de estilo para as estatísticas
     ctx.font = '30px Arial';
@@ -287,12 +289,29 @@ function endGame() {
     showFinalScore();
 }
 
+function calculatePercentages() {
+    let killPercentage = totalEnemiesSpawned > 0 ? (enemiesKilled / totalEnemiesSpawned) * 100 : 0;
+    let totalQuestionsAnswered = correctAnswers + incorrectAnswers;
+    let questionAccuracy = totalQuestionsAnswered > 0 ? (correctAnswers / totalQuestionsAnswered) * 100 : 0;
+
+    return {
+        killPercentage: killPercentage.toFixed(2),
+        questionAccuracy: questionAccuracy.toFixed(2)
+    };
+}
+
+
 function showFinalScore() {
-    ctx.fillText('Pontuação Final: ' + score, canvas.width / 2, canvas.height / 2 - 20);
-    ctx.fillText('Inimigos Mortos: ' + enemiesKilled, canvas.width / 2, canvas.height / 2 + 20);
+    const { killPercentage, questionAccuracy } = calculatePercentages();
+    ctx.fillText('Pontuação Final: ' + score, canvas.width / 2, canvas.height / 2 - 100);
+    ctx.fillText('Inimigos Mortos: ' + enemiesKilled, canvas.width / 2, canvas.height / 2 - 60);
+    ctx.fillText('Total de Inimigos Spawnados: ' + totalEnemiesSpawned, canvas.width / 2, canvas.height / 2 - 20);
+    ctx.fillText('Porcentagem de Inimigos Mortos: ' + killPercentage + '%', canvas.width / 2, canvas.height / 2 + 20);
+    ctx.fillText('Porcentagem de Acertos das Perguntas: ' + questionAccuracy + '%', canvas.width / 2, canvas.height / 2 + 140);
     ctx.fillText('Perguntas Certas: ' + correctAnswers, canvas.width / 2, canvas.height / 2 + 60);
     ctx.fillText('Perguntas Erradas: ' + incorrectAnswers, canvas.width / 2, canvas.height / 2 + 100);
 }
+
 
 
 function restartGame() {
@@ -638,6 +657,9 @@ function spawnEnemies() {
                 y = Math.random() * (canvas.height - 50);
                 break;
         }
+
+        totalEnemiesSpawned++;
+
 
         const enemyType = Math.random() < 0.8 ? 'normal' : 'strong'; // 80% de chance de ser um inimigo normal
 
