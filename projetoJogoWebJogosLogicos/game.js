@@ -144,7 +144,7 @@ function winGame() {
 
 function checkWinCondition() {
     // Exemplo de condição de vitória: pontuação >= 100
-    if (score >= 80) {
+    if (score >= 60) {
         winGame();
     }
     // Você pode adicionar outras condições, como número de inimigos mortos, nível, etc.
