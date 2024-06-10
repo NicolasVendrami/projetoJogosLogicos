@@ -144,7 +144,7 @@ function winGame() {
 
 function checkWinCondition() {
     // Exemplo de condição de vitória: pontuação >= 100
-    if (score >= 100) {
+    if (score >= 80) {
         winGame();
     }
     // Você pode adicionar outras condições, como número de inimigos mortos, nível, etc.
@@ -218,8 +218,8 @@ function drawFireBreath(x, y, direction) {
 
 
 function updateStats() {
-    document.getElementById('score').innerText = `Pontuação: ${score} | Recorde: ${highScore} | Perguntas Acertadas: ${questionsCorrect}`;
-    document.getElementById('lives').innerText = `Vidas: ${lives}`;
+    document.getElementById('score').innerText = `Pontuação: ${score} | Recorde: ${highScore} | Perguntas Acertadas: ${correctAnswers}`;
+    document.getElementById('lives').innerText = `❤️❤️❤️`;
     document.getElementById('level').innerText = `Nível: ${currentLevel}`;
     document.getElementById('enemiesKilled').innerText = `Inimigos Mortos: ${enemiesKilled}`;
 }
@@ -230,7 +230,7 @@ function updateScore(points) {
         highScore = score;
         localStorage.setItem('highScore', highScore);
     }
-    document.getElementById('score').innerText = `Pontuação: ${score} | Recorde: ${highScore}`;
+    document.getElementById('score').innerText = `Pontuação: ${score} | Recorde: ${highScore} | Perguntas Acertadas: ${correctAnswers}`;
 
     // Exibir pergunta a cada 20 pontos
     if (score % 20 === 0) {
@@ -284,7 +284,10 @@ function endGame() {
     ctx.font = '30px Arial';
     ctx.fillStyle = 'white';
     
-    // Exibir estatísticas
+    showFinalScore();
+}
+
+function showFinalScore() {
     ctx.fillText('Pontuação Final: ' + score, canvas.width / 2, canvas.height / 2 - 20);
     ctx.fillText('Inimigos Mortos: ' + enemiesKilled, canvas.width / 2, canvas.height / 2 + 20);
     ctx.fillText('Perguntas Certas: ' + correctAnswers, canvas.width / 2, canvas.height / 2 + 60);
@@ -424,18 +427,22 @@ function handleCollisions() {
 
 function handleQuestionAnswer(isCorrect) {
     if (isCorrect) {
-        correctAnswers++;
         lives++;
+        correctAnswers++;
+        alert("Resposta correta! Você ganhou uma vida.");
     } else {
-        incorrectAnswers++;
         lives--;
+        incorrectAnswers++;
+        alert("Resposta incorreta! Você perdeu uma vida.");
     }
-    // Atualizar a vida na tela
-    document.getElementById('lives').innerText = '❤️'.repeat(lives);
-    // Continuar o jogo após responder
-    gameRunning = true;
-    isPaused = false;
-    gameLoop();
+    updateLives();
+
+    if (lives <= 0) {
+        gameRunning = false;
+        endGame();
+    }
+
+    isQuestionVisible = false;
 }
 
 
@@ -464,8 +471,8 @@ function handleControlsClick(x, y) {
 
 function handleFireBreath() {
     if (fireBreathActive) {
-        const breathX = characterDirection === 'right' ? characterX + 25 : characterX - 50;
-        const breathY = characterY + 25;
+        const breathX = characterDirection === 'right' ? characterX : characterX;
+        const breathY = characterY;
 
         // Verifica se o Fire Breath colide com os inimigos
         enemies.forEach((enemy, eIndex) => {
@@ -543,19 +550,11 @@ function gameLoop() {
 
 function showQuestion() {
     const questionIndex = Math.floor(Math.random() * questions.length);
-    const question = questions[questionIndex].question;
-    const answer = questions[questionIndex].answer.toLowerCase();
+    const { question, answer } = questions[questionIndex];
 
     const userAnswer = prompt(question);
-    if (userAnswer && userAnswer.toLowerCase() === answer) {
-        lives++;
-        updateLives();
-    } else {
-        lives--;
-        updateLives();
-    }
-
-    isQuestionVisible = false;
+    const isCorrect = userAnswer && userAnswer.toLowerCase() === answer.toLowerCase();
+    handleQuestionAnswer(isCorrect);
 }
 
 
@@ -564,18 +563,11 @@ function askQuestion() {
     const { question, answer } = questions[questionIndex];
     const playerAnswer = prompt(question);
 
-    if (playerAnswer && playerAnswer.toLowerCase() === answer) {
-        lives += 1;
-        updateLives();
-        alert("Resposta correta! Você ganhou uma vida.");
-        correctAnswers++;
-    } else {
-        lives -= 1;
-        updateLives();
-        alert("Resposta incorreta! Você perdeu uma vida.");
-        incorrectAnswers++;
-    }
+    const isCorrect = playerAnswer && playerAnswer.toLowerCase() === answer.toLowerCase();
+    handleQuestionAnswer(isCorrect);
 }
+
+
 
 function drawControls() {
     if (showControlsMenu) {
